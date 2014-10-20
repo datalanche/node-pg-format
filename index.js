@@ -20,16 +20,16 @@ function quoteIdent(value) {
 
     if (value === undefined || value === null) {
         throw new Error('SQL identifier cannot be null or undefined');
-    } else if (Array.isArray(value) === true) {
-        throw new Error('SQL identifier cannot be an array');
-    } else if (value === Object(value)) {
-        throw new Error('SQL identifier cannot be an object');
     } else if (value === false) {
         return '"f"';
     } else if (value === true) {
         return '"t"';
     } else if (value instanceof Date) {
         value = formatDate(value.toISOString());
+    } else if (Array.isArray(value) === true) {
+        throw new Error('SQL identifier cannot be an array');
+    } else if (value === Object(value)) {
+        throw new Error('SQL identifier cannot be an object');
     } else {
         value = value.toString();
     }
