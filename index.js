@@ -71,7 +71,7 @@ function quoteLiteral(value) {
         for (var i = 0; i < value.length; i++) {
             temp.push(quoteLiteral[value[i]]);
         }
-        value = temp.toString();
+        return temp.toString();
     } else if (value === Object(value)) {
         value = JSON.stringify(value);
     } else {
