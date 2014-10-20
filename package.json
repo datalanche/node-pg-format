@@ -1,0 +1,31 @@
+{
+    "author": {
+        "name": "Datalanche, Inc.",
+        "url": "https://www.datalanche.com"
+    },
+    "name": "pg-format",
+    "homepage": "https://github.com/datalanche/node-pg-format",
+    "description": "Node.js implementation of PostgreSQL's format() to safely create dynamic SQL queries.",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/datalanche/node-pg-format.git"
+    },
+    "main": "lib/index.js",
+    "directories": {
+        "lib": "./lib"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/datalanche/node-pg-format/raw/master/LICENSE"
+        }
+    ],
+    "engines": {
+        "node": ">=0.10"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+    }
+}
