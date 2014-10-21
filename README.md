@@ -6,7 +6,7 @@ Node.js implementation of [PostgreSQL format()](http://www.postgresql.org/docs/9
 ## Install
 
     npm install pg-format
-    
+
 ## Example
 ```js
 var format = require('pg-format');
@@ -16,8 +16,24 @@ console.log(sql); // SELECT * FROM my_table WHERE my_col = '34' LIMIT 10
 
 ## API
 
+### format(fmt, ...)
+Returns a formatted string based on ```fmt``` which has a style similar to the C function ```sprintf()```.
+* ```%%``` outputs a literal ```%``` character.
+* ```%I``` outputs an escaped SQL identifier.
+* ```%L``` outputs an escaped SQL literal.
+* ```%s``` outputs a simple string.
+
+### format.ident(input)
+Returns the input as an escaped SQL identifier string. ```undefined```, ```null```, arrays, and objects will throw an error.
+
+### format.literal(input)
+Returns the input as an escaped SQL literal string. ```undefined``` and ```null``` will return ```'NULL'```;
+
+### format.string(input)
+Returns the input as a simple string. ```undefined``` and ```null``` will return an empty string. If an array element is ```undefined``` or ```null```, it will be removed from the output string.
+
 ## Arrays and Objects
-Javascript arrays and objects can be used for literals (%L) and strings (%s), but not identifiers (%I). For arrays, each element is escaped, if appropriate, and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resuling string is escaped if appropriate. See the examples below.
+Javascript arrays and objects can be used for literals (%L) and strings (%s), but not identifiers (%I). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
 
 ```js
 var format = require('pg-format');
