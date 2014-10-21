@@ -33,7 +33,7 @@ Returns the input as an escaped SQL literal string. ```undefined``` and ```null`
 Returns the input as a simple string. ```undefined``` and ```null``` will return an empty string. If an array element is ```undefined``` or ```null```, it will be removed from the output string.
 
 ## Arrays and Objects
-Javascript arrays and objects can be used for literals (%L) and strings (%s), but not identifiers (%I). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
+Javascript arrays and objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
 
 ```js
 var format = require('pg-format');
@@ -41,6 +41,6 @@ var format = require('pg-format');
 var myArray = [ 1, 2, 3 ];
 var myObject = { a: 1, b: 2 };
 
-var sql = format('SELECT * FROM t WHERE c1 IN(%L) AND c2 = %L', myArray, myObject);
-console.log(sql); // SELECT * FROM t WHERE c1 IN('1','2','3') AND c2 = '{"a":1,"b":2}'
+var sql = format('SELECT * FROM t WHERE c1 IN (%L) AND c2 = %L', myArray, myObject);
+console.log(sql); // SELECT * FROM t WHERE c1 IN ('1','2','3') AND c2 = '{"a":1,"b":2}'
 ```
