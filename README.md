@@ -23,6 +23,19 @@ Returns a formatted string based on ```fmt``` which has a style similar to the C
 * ```%L``` outputs an escaped SQL literal.
 * ```%s``` outputs a simple string.
 
+### format.config(cfg)
+Changes the global configuration. You can change which letters are used to denote identifiers, literals, and strings in the formatted string. This is useful when the formatted string contains a PL/pgSQL function which calls [PostgreSQL format()](http://www.postgresql.org/docs/9.3/static/functions-string.html#FUNCTIONS-STRING-FORMAT) itself.
+```js
+var format = require('pg-format');
+format.config({
+    pattern: {
+        ident: 'V',
+        literal: 'C',
+        string: 't'
+    }
+});
+```
+
 ### format.ident(input)
 Returns the input as an escaped SQL identifier string. ```undefined```, ```null```, arrays, and objects will throw an error.
 
