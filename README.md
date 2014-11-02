@@ -34,6 +34,7 @@ format.config({
         string: 't'
     }
 });
+format.config(); // reset to default
 ```
 
 ### format.ident(input)
