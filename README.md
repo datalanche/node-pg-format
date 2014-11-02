@@ -45,6 +45,9 @@ Returns the input as an escaped SQL literal string. ```undefined``` and ```null`
 ### format.string(input)
 Returns the input as a simple string. ```undefined``` and ```null``` will return an empty string. If an array element is ```undefined``` or ```null```, it will be removed from the output string.
 
+### format.withArray(fmt, array)
+Same as ```format(fmt, ...)``` except parameters are provided in an array rather than as function arguments. This is useful when dynamically creating a SQL query and the number of parameters is unknown or variable.
+
 ## <a name="arrobject"></a> Arrays and Objects
 Javascript arrays and objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
 
