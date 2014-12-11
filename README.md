@@ -1,7 +1,7 @@
 node-pg-format
 ==============
 
-Node.js implementation of [PostgreSQL format()](http://www.postgresql.org/docs/9.3/static/functions-string.html#FUNCTIONS-STRING-FORMAT) to safely create dynamic SQL queries. SQL identifiers and literals are escaped to help prevent SQL injection. The behavior is equivalent to [PostgreSQL format()](http://www.postgresql.org/docs/9.3/static/functions-string.html#FUNCTIONS-STRING-FORMAT) except when handling Javascript arrays and objects which is explained [below](#arrobject).
+Node.js implementation of [PostgreSQL format()](http://www.postgresql.org/docs/9.3/static/functions-string.html#FUNCTIONS-STRING-FORMAT) to safely create dynamic SQL queries. SQL identifiers and literals are escaped to help prevent SQL injection. The behavior is equivalent to [PostgreSQL format()](http://www.postgresql.org/docs/9.3/static/functions-string.html#FUNCTIONS-STRING-FORMAT). This module also supports Node buffers, arrays, and objects which is explained [below](#arrobject).
 
 ## Install
 
@@ -49,8 +49,11 @@ Returns the input as a simple string. ```undefined``` and ```null``` will return
 ### format.withArray(fmt, array)
 Same as ```format(fmt, ...)``` except parameters are provided in an array rather than as function arguments. This is useful when dynamically creating a SQL query and the number of parameters is unknown or variable.
 
+## <a name="buffer"></a> Node Buffers
+Node buffers can be used for literals (```%L```) and strings (```%s```), and will be converted to [PostgreSQL bytea hex format](http://www.postgresql.org/docs/9.3/static/datatype-binary.html).
+
 ## <a name="arrobject"></a> Arrays and Objects
-Javascript objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
+For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. Objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). See the example below.
 
 ```js
 var format = require('pg-format');
