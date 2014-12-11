@@ -50,7 +50,7 @@ Returns the input as a simple string. ```undefined``` and ```null``` will return
 Same as ```format(fmt, ...)``` except parameters are provided in an array rather than as function arguments. This is useful when dynamically creating a SQL query and the number of parameters is unknown or variable.
 
 ## <a name="arrobject"></a> Arrays and Objects
-Javascript arrays and objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
+Javascript objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. See the example below.
 
 ```js
 var format = require('pg-format');
