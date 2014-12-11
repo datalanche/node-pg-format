@@ -6,6 +6,7 @@ var format = require('../lib');
 
 var testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
 var testArray = [ 'abc', 1, true, null, testDate ];
+var testIdentArray = [ 'abc', 'AbC', 1, true, testDate ];
 var testObject = { a: 1, b: 2 };
 
 describe('format(fmt, ...)', function() {
@@ -80,6 +81,7 @@ describe('format.ident(val)', function() {
         format.ident(-15).should.equal('"-15"');
         format.ident(45.13).should.equal('"45.13"');
         format.ident(-45.13).should.equal('"-45.13"');
+        format.ident(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00"');
         format.ident(testDate).should.equal('"2012-12-14 13:06:43.152+00"');
     });
 
@@ -97,15 +99,6 @@ describe('format.ident(val)', function() {
             format.ident(null);
         } catch (err) {
             assert(err.message === 'SQL identifier cannot be null or undefined');
-            done();
-        }
-    });
-
-    it('should throw when array', function (done) {
-        try {
-            format.ident([]);
-        } catch (err) {
-            assert(err.message === 'SQL identifier cannot be an array');
             done();
         }
     });
