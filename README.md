@@ -38,7 +38,7 @@ format.config(); // reset to default
 ```
 
 ### format.ident(input)
-Returns the input as an escaped SQL identifier string. ```undefined```, ```null```, arrays, and objects will throw an error.
+Returns the input as an escaped SQL identifier string. ```undefined```, ```null```, and objects will throw an error.
 
 ### format.literal(input)
 Returns the input as an escaped SQL literal string. ```undefined``` and ```null``` will return ```'NULL'```;
