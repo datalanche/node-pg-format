@@ -2,7 +2,8 @@
 // Original source from https://github.com/segmentio/pg-escape
 //
 var assert = require('assert');
-var format = require('../lib');
+var format = require(__dirname + '/../lib');
+var should = require('should');
 
 var testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
 var testArray = [ 'abc', 1, true, null, testDate ];
@@ -36,6 +37,40 @@ describe('format(fmt, ...)', function() {
     describe('%L', function() {
         it('should format as a literal', function() {
             format('%L', "Tobi's").should.equal("'Tobi''s'");
+        });
+    });
+});
+
+describe('format.withArray(fmt, args)', function() {
+    describe('%s', function() {
+        it('should format as a simple string', function() {
+            format.withArray('some %s here', [ 'thing' ]).should.equal('some thing here');
+            format.withArray('some %s thing %s', [ 'long', 'here' ]).should.equal('some long thing here');
+        });
+    });
+
+    describe('%%', function() {
+        it('should format as %', function() {
+            format.withArray('some %%', [ 'thing' ]).should.equal('some %');
+        });
+
+        it('should not eat args', function() {
+            format.withArray('just %% a %s', [ 'test' ]).should.equal('just % a test');
+            format.withArray('just %% a %s %s %s', [ 'test', 'again', 'and again' ]).should.equal('just % a test again and again');
+        });
+    });
+
+    describe('%I', function() {
+        it('should format as an identifier', function() {
+            format.withArray('some %I', [ 'foo/bar/baz' ]).should.equal('some "foo/bar/baz"');
+            format.withArray('some %I and %I', [ 'foo/bar/baz', '#hey' ]).should.equal('some "foo/bar/baz" and "#hey"');
+        });
+    });
+
+    describe('%L', function() {
+        it('should format as a literal', function() {
+            format.withArray('%L', [ "Tobi's" ]).should.equal("'Tobi''s'");
+            format.withArray('%L %L', [ "Tobi's", "birthday" ]).should.equal("'Tobi''s' 'birthday'");
         });
     });
 });
