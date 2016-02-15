@@ -9,12 +9,17 @@ var testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
 var testArray = [ 'abc', 1, true, null, testDate ];
 var testIdentArray = [ 'abc', 'AbC', 1, true, testDate ];
 var testObject = { a: 1, b: 2 };
+var testNestedArray = [ [1, 2], [3, 4], [5, 6] ];
 
 describe('format(fmt, ...)', function() {
     describe('%s', function() {
         it('should format as a simple string', function() {
             format('some %s here', 'thing').should.equal('some thing here');
             format('some %s thing %s', 'long', 'here').should.equal('some long thing here');
+        });
+
+        it('should format array of array as simple string', function() {
+            format('many %s %s', 'things', testNestedArray).should.equal('many things (1, 2), (3, 4), (5, 6)');
         });
     });
 
@@ -32,11 +37,21 @@ describe('format(fmt, ...)', function() {
         it('should format as an identifier', function() {
             format('some %I', 'foo/bar/baz').should.equal('some "foo/bar/baz"');
         });
+
+        it('should not format array of array as an identifier', function() {
+            (function() {
+                format('many %I %I', 'foo/bar/baz', testNestedArray);
+            }).should.throw(Error);
+        });
     });
 
     describe('%L', function() {
         it('should format as a literal', function() {
             format('%L', "Tobi's").should.equal("'Tobi''s'");
+        });
+
+        it('should format array of array as a literal', function() {
+            format('%L', testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
         });
     });
 });
@@ -46,6 +61,10 @@ describe('format.withArray(fmt, args)', function() {
         it('should format as a simple string', function() {
             format.withArray('some %s here', [ 'thing' ]).should.equal('some thing here');
             format.withArray('some %s thing %s', [ 'long', 'here' ]).should.equal('some long thing here');
+        });
+
+        it('should format array of array as simple string', function() {
+            format.withArray('many %s %s', ['things', testNestedArray]).should.equal('many things (1, 2), (3, 4), (5, 6)');
         });
     });
 
@@ -65,12 +84,22 @@ describe('format.withArray(fmt, args)', function() {
             format.withArray('some %I', [ 'foo/bar/baz' ]).should.equal('some "foo/bar/baz"');
             format.withArray('some %I and %I', [ 'foo/bar/baz', '#hey' ]).should.equal('some "foo/bar/baz" and "#hey"');
         });
+
+        it('should not format array of array as an identifier', function() {
+            (function() {
+                format.withArray('many %I %I', ['foo/bar/baz', testNestedArray]);
+            }).should.throw(Error);
+        });
     });
 
     describe('%L', function() {
         it('should format as a literal', function() {
             format.withArray('%L', [ "Tobi's" ]).should.equal("'Tobi''s'");
             format.withArray('%L %L', [ "Tobi's", "birthday" ]).should.equal("'Tobi''s' 'birthday'");
+        });
+
+        it('should format array of array as a literal', function() {
+            format.withArray('%L', [testNestedArray]).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
         });
     });
 });
@@ -88,6 +117,7 @@ describe('format.string(val)', function() {
         format.string(-45.13).should.equal('-45.13');
         format.string('something').should.equal('something');
         format.string(testArray).should.equal('abc,1,t,2012-12-14 13:06:43.152+00');
+        format.string(testNestedArray).should.equal('(1, 2), (3, 4), (5, 6)');
         format.string(testDate).should.equal('2012-12-14 13:06:43.152+00');
         format.string(testObject).should.equal('{"a":1,"b":2}');
     });
@@ -117,6 +147,9 @@ describe('format.ident(val)', function() {
         format.ident(45.13).should.equal('"45.13"');
         format.ident(-45.13).should.equal('"-45.13"');
         format.ident(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00"');
+        (function() {
+            format.ident(testNestedArray)
+        }).should.throw(Error);
         format.ident(testDate).should.equal('"2012-12-14 13:06:43.152+00"');
     });
 
@@ -164,6 +197,7 @@ describe('format.literal(val)', function() {
         format.literal(-45.13).should.equal("'-45.13'");
         format.literal('hello world').should.equal("'hello world'");
         format.literal(testArray).should.equal("'abc','1','t',NULL,'2012-12-14 13:06:43.152+00'");
+        format.literal(testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
         format.literal(testDate).should.equal("'2012-12-14 13:06:43.152+00'");
         format.literal(testObject).should.equal("'{\"a\":1,\"b\":2}'");
     });

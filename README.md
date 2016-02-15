@@ -53,16 +53,21 @@ Same as ```format(fmt, ...)``` except parameters are provided in an array rather
 Node buffers can be used for literals (```%L```) and strings (```%s```), and will be converted to [PostgreSQL bytea hex format](http://www.postgresql.org/docs/9.3/static/datatype-binary.html).
 
 ## <a name="arrobject"></a> Arrays and Objects
-For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. Objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). See the example below.
+For arrays, each element is escaped when appropriate and concatenated to a comma-delimited string. Nested arrays are turned into grouped lists (for bulk inserts), e.g. [['a', 'b'], ['c', 'd']] turns into ('a', 'b'), ('c', 'd'). Nested array expansion can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```).  
+For objects, ```JSON.stringify()``` is called and the resulting string is escaped if appropriate. Objects can be used for literals (```%L```) and strings (```%s```), but not identifiers (```%I```). See the example below.
 
 ```js
 var format = require('pg-format');
 
 var myArray = [ 1, 2, 3 ];
 var myObject = { a: 1, b: 2 };
+var myNestedArray = [['a', 1], ['b', 2]];
 
 var sql = format('SELECT * FROM t WHERE c1 IN (%L) AND c2 = %L', myArray, myObject);
 console.log(sql); // SELECT * FROM t WHERE c1 IN ('1','2','3') AND c2 = '{"a":1,"b":2}'
+
+sql = format('INSERT INTO t (name, age) VALUES %L', myNestedArray); 
+console.log(sql); // INSERT INTO t (name, age) VALUES ('a', '1'), ('b', '2')
 ```
 
 ## Testing
