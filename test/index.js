@@ -199,7 +199,7 @@ describe('format.literal(val)', function() {
         format.literal(testArray).should.equal("'abc','1','t',NULL,'2012-12-14 13:06:43.152+00'");
         format.literal(testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
         format.literal(testDate).should.equal("'2012-12-14 13:06:43.152+00'");
-        format.literal(testObject).should.equal("'{\"a\":1,\"b\":2}'");
+        format.literal(testObject).should.equal("'{\"a\":1,\"b\":2}'::jsonb");
     });
 
     it('should format quotes', function() {
