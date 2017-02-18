@@ -21,6 +21,27 @@ describe('format(fmt, ...)', function() {
         it('should format array of array as simple string', function() {
             format('many %s %s', 'things', testNestedArray).should.equal('many things (1, 2), (3, 4), (5, 6)');
         });
+
+        it('should format string using position field', function() {
+            format('some %1$s', 'thing').should.equal('some thing');
+            format('some %1$s %1$s', 'thing').should.equal('some thing thing');
+            format('some %1$s %s', 'thing', 'again').should.equal('some thing again');
+            format('some %1$s %2$s', 'thing', 'again').should.equal('some thing again');
+            format('some %1$s %2$s %1$s', 'thing', 'again').should.equal('some thing again thing');
+            format('some %1$s %2$s %s %1$s', 'thing', 'again', 'some').should.equal('some thing again some thing');
+        });
+
+        it('should not format string using position 0', function() {
+            (function() {
+                format('some %0$s', 'thing');
+            }).should.throw(Error);
+        });
+
+        it('should not format identifier using position field with too few arguments', function() {
+            (function() {
+                format('some %2$s', 'thing');
+            }).should.throw(Error);
+        });
     });
 
     describe('%%', function() {
@@ -30,6 +51,10 @@ describe('format(fmt, ...)', function() {
 
         it('should not eat args', function() {
             format('just %% a %s', 'test').should.equal('just % a test');
+        });
+
+        it('should not format % using position field', function() {
+            format('%1$%', 'thing').should.equal('%1$%');
         });
     });
 
@@ -43,6 +68,27 @@ describe('format(fmt, ...)', function() {
                 format('many %I %I', 'foo/bar/baz', testNestedArray);
             }).should.throw(Error);
         });
+
+        it('should format identifier using position field', function() {
+            format('some %1$I', 'thing').should.equal('some thing');
+            format('some %1$I %1$I', 'thing').should.equal('some thing thing');
+            format('some %1$I %I', 'thing', 'again').should.equal('some thing again');
+            format('some %1$I %2$I', 'thing', 'again').should.equal('some thing again');
+            format('some %1$I %2$I %1$I', 'thing', 'again').should.equal('some thing again thing');
+            format('some %1$I %2$I %I %1$I', 'thing', 'again', 'huh').should.equal('some thing again huh thing');
+        });
+
+        it('should not format identifier using position 0', function() {
+            (function() {
+                format('some %0$I', 'thing');
+            }).should.throw(Error);
+        });
+
+        it('should not format identifier using position field with too few arguments', function() {
+            (function() {
+                format('some %2$I', 'thing');
+            }).should.throw(Error);
+        });
     });
 
     describe('%L', function() {
@@ -52,6 +98,27 @@ describe('format(fmt, ...)', function() {
 
         it('should format array of array as a literal', function() {
             format('%L', testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
+        });
+
+        it('should format literal using position field', function() {
+            format('some %1$L', 'thing').should.equal("some 'thing'");
+            format('some %1$L %1$L', 'thing').should.equal("some 'thing' 'thing'");
+            format('some %1$L %L', 'thing', 'again').should.equal("some 'thing' 'again'");
+            format('some %1$L %2$L', 'thing', 'again').should.equal("some 'thing' 'again'");
+            format('some %1$L %2$L %1$L', 'thing', 'again').should.equal("some 'thing' 'again' 'thing'");
+            format('some %1$L %2$L %L %1$L', 'thing', 'again', 'some').should.equal("some 'thing' 'again' 'some' 'thing'");
+        });
+
+        it('should not format literal using position 0', function() {
+            (function() {
+                format('some %0$L', 'thing');
+            }).should.throw(Error);
+        });
+
+        it('should not format literal using position field with too few arguments', function() {
+            (function() {
+                format('some %2$L', 'thing');
+            }).should.throw(Error);
         });
     });
 });
