@@ -37,7 +37,7 @@ describe('format(fmt, ...)', function() {
             }).should.throw(Error);
         });
 
-        it('should not format identifier using position field with too few arguments', function() {
+        it('should not format string using position field with too few arguments', function() {
             (function() {
                 format('some %2$s', 'thing');
             }).should.throw(Error);
