@@ -97,7 +97,7 @@ describe('format(fmt, ...)', function() {
         });
 
         it('should format array of array as a literal', function() {
-            format('%L', testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
+            format('%L', testNestedArray).should.equal("(1, 2), (3, 4), (5, 6)");
         });
 
         it('should format literal using position field', function() {
@@ -166,7 +166,7 @@ describe('format.withArray(fmt, args)', function() {
         });
 
         it('should format array of array as a literal', function() {
-            format.withArray('%L', [testNestedArray]).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
+            format.withArray('%L', [testNestedArray]).should.equal("(1, 2), (3, 4), (5, 6)");
         });
     });
 });
@@ -257,14 +257,14 @@ describe('format.literal(val)', function() {
     it('should quote', function() {
         format.literal(true).should.equal("'t'");
         format.literal(false).should.equal("'f'");
-        format.literal(0).should.equal("'0'");
-        format.literal(15).should.equal("'15'");
-        format.literal(-15).should.equal("'-15'");
-        format.literal(45.13).should.equal("'45.13'");
-        format.literal(-45.13).should.equal("'-45.13'");
+        format.literal(0).should.equal(0);
+        format.literal(15).should.equal(15);
+        format.literal(-15).should.equal(-15);
+        format.literal(45.13).should.equal(45.13);
+        format.literal(-45.13).should.equal(-45.13);
         format.literal('hello world').should.equal("'hello world'");
-        format.literal(testArray).should.equal("'abc','1','t',NULL,'2012-12-14 13:06:43.152+00'");
-        format.literal(testNestedArray).should.equal("('1', '2'), ('3', '4'), ('5', '6')");
+        format.literal(testArray).should.equal("'abc',1,'t',NULL,'2012-12-14 13:06:43.152+00'");
+        format.literal(testNestedArray).should.equal("(1, 2), (3, 4), (5, 6)");
         format.literal(testDate).should.equal("'2012-12-14 13:06:43.152+00'");
         format.literal(testObject).should.equal("'{\"a\":1,\"b\":2}'::jsonb");
     });
