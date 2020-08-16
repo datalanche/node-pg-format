@@ -11,7 +11,7 @@ Node.js implementation of [PostgreSQL format()](http://www.postgresql.org/docs/9
 ```js
 var format = require('pg-format');
 var sql = format('SELECT * FROM %I WHERE my_col = %L %s', 'my_table', 34, 'LIMIT 10');
-console.log(sql); // SELECT * FROM my_table WHERE my_col = '34' LIMIT 10
+console.log(sql); // SELECT * FROM my_table WHERE my_col = 34 LIMIT 10
 ```
 
 ## API
@@ -28,7 +28,7 @@ You can define where an argument is positioned using ```n$``` where ```n``` is t
 ```js
 var format = require('pg-format');
 var sql = format('SELECT %1$L, %1$L, %L', 34, 'test');
-console.log(sql); // SELECT '34', '34', 'test'
+console.log(sql); // SELECT 34, 34, 'test'
 ```
 
 ### format.config(cfg)
@@ -72,10 +72,10 @@ var myObject = { a: 1, b: 2 };
 var myNestedArray = [['a', 1], ['b', 2]];
 
 var sql = format('SELECT * FROM t WHERE c1 IN (%L) AND c2 = %L', myArray, myObject);
-console.log(sql); // SELECT * FROM t WHERE c1 IN ('1','2','3') AND c2 = '{"a":1,"b":2}'
+console.log(sql); // SELECT * FROM t WHERE c1 IN (1,2,3) AND c2 = '{"a":1,"b":2}'
 
 sql = format('INSERT INTO t (name, age) VALUES %L', myNestedArray); 
-console.log(sql); // INSERT INTO t (name, age) VALUES ('a', '1'), ('b', '2')
+console.log(sql); // INSERT INTO t (name, age) VALUES ('a', 1), ('b', 2)
 ```
 
 ## Testing
