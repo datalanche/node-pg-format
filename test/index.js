@@ -7,7 +7,7 @@ var should = require('should');
 
 var testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
 var testArray = ['abc', 1, true, null, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
-var testIdentArray = ['abc', 'AbC', 1, true, testDate];
+var testIdentArray = ['abc', 'AbC', 1, true, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
 var testObject = { a: 1, b: 2 };
 var testNestedArray = [[1, 2], [3, 4], [5, 6]];
 
@@ -213,7 +213,7 @@ describe('format.ident(val)', function () {
         format.ident(-15).should.equal('"-15"');
         format.ident(45.13).should.equal('"45.13"');
         format.ident(-45.13).should.equal('"-45.13"');
-        format.ident(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00"');
+        format.ident(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00","-Infinity","Infinity","NaN","1"');
         (function () {
             format.ident(testNestedArray)
         }).should.throw(Error);
@@ -257,11 +257,11 @@ describe('format.literal(val)', function () {
     it('should quote', function () {
         format.literal(true).should.equal("'t'");
         format.literal(false).should.equal("'f'");
-        format.literal(0).should.equal(0);
-        format.literal(15).should.equal(15);
-        format.literal(-15).should.equal(-15);
-        format.literal(45.13).should.equal(45.13);
-        format.literal(-45.13).should.equal(-45.13);
+        format.literal(0).should.equal('0');
+        format.literal(15).should.equal('15');
+        format.literal(-15).should.equal('-15');
+        format.literal(45.13).should.equal('45.13');
+        format.literal(-45.13).should.equal('-45.13');
         format.literal('hello world').should.equal("'hello world'");
         format.literal(testArray).should.equal("'abc',1,'t',NULL,'2012-12-14 13:06:43.152+00','-Infinity','Infinity','NaN',1");
         format.literal(testNestedArray).should.equal("(1, 2), (3, 4), (5, 6)");
