@@ -12,6 +12,7 @@ var testObject = { a: 1, b: 2 };
 var testNestedArray = [ [1, 2], [3, 4], [5, 6] ];
 
 describe('format(fmt, ...)', function() {
+
     describe('%s', function() {
         it('should format as a simple string', function() {
             format('some %s here', 'thing').should.equal('some thing here');
@@ -277,3 +278,12 @@ describe('format.literal(val)', function() {
         format.literal('\\whoop\\').should.equal("E'\\\\whoop\\\\'");
     });
 });
+
+describe('format sql proper check', function() {
+    it ('should be correct sql for arrays', function () {
+        format('INSERT INTO tablename VALUES %L', [ ['some', 'some2'], ['any', 'any2']]).should.equal(`INSERT INTO tablename VALUES ('some', 'some2'), ('any', 'any2')`);
+    })
+    it ('should be correct sql for to_timestamp function in field', function () {
+        format('INSERT INTO tablename VALUES %L', [ ['some', 'to_timestamp(1223454)'], ['any', 'to_timestamp(1223454)']]).should.equal(`INSERT INTO tablename VALUES ('some', to_timestamp(1223454)), ('any', to_timestamp(1223454))`);
+    })
+})
