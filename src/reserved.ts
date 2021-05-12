@@ -1,4 +1,3 @@
-"use strict";
 //
 // PostgreSQL reserved words
 //
