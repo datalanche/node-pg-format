@@ -5,7 +5,7 @@ Node.js implementation of [PostgreSQL format()](http://www.postgresql.org/docs/9
 
 ## Install
 
-    npm install pg-format
+    npm install node-pg-format
 
 ## Example
 ```js
