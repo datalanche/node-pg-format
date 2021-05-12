@@ -147,4 +147,4 @@ module.exports = {
     "WHERE": true,
     "WITH": true,
     "WITHOUT": true,
-};
+}
