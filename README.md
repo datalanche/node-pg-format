@@ -82,5 +82,6 @@ console.log(sql); // INSERT INTO t (name, age) VALUES ('a', 1), ('b', 2)
 
 ```
 npm install
+npm run build
 npm test
 ```
