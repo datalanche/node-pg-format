@@ -247,9 +247,12 @@ function format(fmt: string, ...args: any[]): string {
   return formatWithArray(fmt, args)
 }
 
-exports = module.exports = format
-exports.config = config
-exports.ident = quoteIdent
-exports.literal = quoteLiteral
-exports.string = quoteString
-exports.withArray = formatWithArray
+
+format.config = config
+format.ident = quoteIdent
+format.literal = quoteLiteral
+format.string = quoteString
+format.withArray = formatWithArray
+
+export = format 
+
