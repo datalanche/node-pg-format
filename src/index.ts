@@ -63,7 +63,7 @@ function quoteIdent(value:any): string {
   const ident = value.toString().slice(0) // create copy
 
   // do not quote a valid, unquoted identifier
-  if (/^[a-z_][a-z0-9_$]*$/.test(ident) === true && isReserved(ident) === false) {
+  if (/^[a-z_][a-z0-9_$.]*$/.test(ident) === true && isReserved(ident) === false) {
     return ident
   }
 
