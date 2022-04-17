@@ -2,7 +2,7 @@
 // PostgreSQL reserved words
 // see: https://www.postgresql.org/docs/current/sql-keywords-appendix.html
 //
-module.exports = {
+export default  {
   "AES128": true,
   "AES256": true,
   "ALL": true,

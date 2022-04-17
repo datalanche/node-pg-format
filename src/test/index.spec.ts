@@ -1,22 +1,32 @@
-//
-// Original source from https://github.com/segmentio/pg-escape
-//
-var assert = require('assert');
-var format = require(__dirname + '/../lib');
-var should = require('should');
+import {
+  format,
+  formatWithArray,
+  quoteIdent,
+  quoteLiteral,
+  quoteString,
+  config
+} from '..'
+import assert from 'assert'
+import 'should'
+import { exit } from 'process';
 
-var testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
-var testArray = ['abc', 1, true, null, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
-var testIdentArray = ['abc', 'AbC', 1, true, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
-var testObject = { a: 1, b: 2 };
-var testNestedArray = [[1, 2], [3, 4], [5, 6]];
+
+const testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
+const testArray = ['abc', 1, true, null, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
+const testIdentArray = ['abc', 'AbC', 1, true, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
+const testObject = { a: 1, b: 2 };
+const testNestedArray = [[1, 2], [3, 4], [5, 6]];
 
 describe('format(fmt, ...)', function () {
   describe('%s', function () {
     it('should format as a simple string', function () {
+     
       format('some %s here', 'thing').should.equal('some thing here');
       format('some %s thing %s', 'long', 'here').should.equal('some long thing here');
+  
     });
+
+ 
 
     it('should format array of array as simple string', function () {
       format('many %s %s', 'things', testNestedArray).should.equal('many things (1, 2), (3, 4), (5, 6)');
@@ -127,107 +137,107 @@ describe('format(fmt, ...)', function () {
   });
 });
 
-describe('format.withArray(fmt, args)', function () {
+describe('formatWithArray(fmt, args)', function () {
   describe('%s', function () {
     it('should format as a simple string', function () {
-      format.withArray('some %s here', ['thing']).should.equal('some thing here');
-      format.withArray('some %s thing %s', ['long', 'here']).should.equal('some long thing here');
+      formatWithArray('some %s here', ['thing']).should.equal('some thing here');
+      formatWithArray('some %s thing %s', ['long', 'here']).should.equal('some long thing here');
     });
 
     it('should format array of array as simple string', function () {
-      format.withArray('many %s %s', ['things', testNestedArray]).should.equal('many things (1, 2), (3, 4), (5, 6)');
+      formatWithArray('many %s %s', ['things', testNestedArray]).should.equal('many things (1, 2), (3, 4), (5, 6)');
     });
   });
 
   describe('%%', function () {
     it('should format as %', function () {
-      format.withArray('some %%', ['thing']).should.equal('some %');
+      formatWithArray('some %%', ['thing']).should.equal('some %');
     });
 
     it('should not eat args', function () {
-      format.withArray('just %% a %s', ['test']).should.equal('just % a test');
-      format.withArray('just %% a %s %s %s', ['test', 'again', 'and again']).should.equal('just % a test again and again');
+      formatWithArray('just %% a %s', ['test']).should.equal('just % a test');
+      formatWithArray('just %% a %s %s %s', ['test', 'again', 'and again']).should.equal('just % a test again and again');
     });
   });
 
   describe('%I', function () {
     it('should format as an identifier', function () {
-      format.withArray('some %I', ['foo/bar/baz']).should.equal('some "foo/bar/baz"');
-      format.withArray('some %I and %I', ['foo/bar/baz', '#hey']).should.equal('some "foo/bar/baz" and "#hey"');
+      formatWithArray('some %I', ['foo/bar/baz']).should.equal('some "foo/bar/baz"');
+      formatWithArray('some %I and %I', ['foo/bar/baz', '#hey']).should.equal('some "foo/bar/baz" and "#hey"');
     });
 
     it('should not format array of array as an identifier', function () {
       (function () {
-        format.withArray('many %I %I', ['foo/bar/baz', testNestedArray]);
+        formatWithArray('many %I %I', ['foo/bar/baz', testNestedArray]);
       }).should.throw(Error);
     });
   });
 
   describe('%L', function () {
     it('should format as a literal', function () {
-      format.withArray('%L', ["Tobi's"]).should.equal("'Tobi''s'");
-      format.withArray('%L %L', ["Tobi's", "birthday"]).should.equal("'Tobi''s' 'birthday'");
+      formatWithArray('%L', ["Tobi's"]).should.equal("'Tobi''s'");
+      formatWithArray('%L %L', ["Tobi's", "birthday"]).should.equal("'Tobi''s' 'birthday'");
     });
 
     it('should format array of array as a literal', function () {
-      format.withArray('%L', [testNestedArray]).should.equal("(1, 2), (3, 4), (5, 6)");
+      formatWithArray('%L', [testNestedArray]).should.equal("(1, 2), (3, 4), (5, 6)");
     });
   });
 });
 
-describe('format.string(val)', function () {
+describe('quoteString(val)', function () {
   it('should coerce to a string', function () {
-    format.string(undefined).should.equal('');
-    format.string(null).should.equal('');
-    format.string(true).should.equal('t');
-    format.string(false).should.equal('f');
-    format.string(0).should.equal('0');
-    format.string(15).should.equal('15');
-    format.string(-15).should.equal('-15');
-    format.string(45.13).should.equal('45.13');
-    format.string(-45.13).should.equal('-45.13');
-    format.string('something').should.equal('something');
-    format.string(testArray).should.equal('abc,1,t,2012-12-14 13:06:43.152+00,-Infinity,Infinity,NaN,1');
-    format.string(testNestedArray).should.equal('(1, 2), (3, 4), (5, 6)');
-    format.string(testDate).should.equal('2012-12-14 13:06:43.152+00');
-    format.string(testObject).should.equal('{"a":1,"b":2}');
+    quoteString(undefined).should.equal('');
+    quoteString(null).should.equal('');
+    quoteString(true).should.equal('t');
+    quoteString(false).should.equal('f');
+    quoteString(0).should.equal('0');
+    quoteString(15).should.equal('15');
+    quoteString(-15).should.equal('-15');
+    quoteString(45.13).should.equal('45.13');
+    quoteString(-45.13).should.equal('-45.13');
+    quoteString('something').should.equal('something');
+    quoteString(testArray).should.equal('abc,1,t,2012-12-14 13:06:43.152+00,-Infinity,Infinity,NaN,1');
+    quoteString(testNestedArray).should.equal('(1, 2), (3, 4), (5, 6)');
+    quoteString(testDate).should.equal('2012-12-14 13:06:43.152+00');
+    quoteString(testObject).should.equal('{"a":1,"b":2}');
   });
 });
 
-describe('format.ident(val)', function () {
+describe('quoteIdent(val)', function () {
   it('should quote when necessary', function () {
-    format.ident('foo').should.equal('foo');
-    format.ident('_foo').should.equal('_foo');
-    format.ident('_foo_bar$baz').should.equal('_foo_bar$baz');
-    format.ident('test.some.stuff').should.equal('test.some.stuff');
-    format.ident('test."some".stuff').should.equal('"test.""some"".stuff"');
+    quoteIdent('foo').should.equal('foo');
+    quoteIdent('_foo').should.equal('_foo');
+    quoteIdent('_foo_bar$baz').should.equal('_foo_bar$baz');
+    quoteIdent('test.some.stuff').should.equal('test.some.stuff');
+    quoteIdent('test."some".stuff').should.equal('"test.""some"".stuff"');
   });
 
   it('should quote reserved words', function () {
-    format.ident('desc').should.equal('"desc"');
-    format.ident('join').should.equal('"join"');
-    format.ident('cross').should.equal('"cross"');
+    quoteIdent('desc').should.equal('"desc"');
+    quoteIdent('join').should.equal('"join"');
+    quoteIdent('cross').should.equal('"cross"');
   });
 
   it('should quote', function () {
-    format.ident(true).should.equal('"t"');
-    format.ident(false).should.equal('"f"');
-    format.ident(0).should.equal('"0"');
-    format.ident(15).should.equal('"15"');
-    format.ident(-15).should.equal('"-15"');
-    format.ident(45.13).should.equal('"45.13"');
-    format.ident(-45.13).should.equal('"-45.13"');
-    format.ident(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00","-Infinity","Infinity","NaN","1"');
+    quoteIdent(true).should.equal('"t"');
+    quoteIdent(false).should.equal('"f"');
+    quoteIdent(0).should.equal('"0"');
+    quoteIdent(15).should.equal('"15"');
+    quoteIdent(-15).should.equal('"-15"');
+    quoteIdent(45.13).should.equal('"45.13"');
+    quoteIdent(-45.13).should.equal('"-45.13"');
+    quoteIdent(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00","-Infinity","Infinity","NaN","1"');
     (function () {
-      format.ident(testNestedArray)
+      quoteIdent(testNestedArray)
     }).should.throw(Error);
-    format.ident(testDate).should.equal('"2012-12-14 13:06:43.152+00"');
+    quoteIdent(testDate).should.equal('"2012-12-14 13:06:43.152+00"');
   });
 
   it('should throw when undefined', function (done) {
     try {
-      format.ident(undefined);
-    } catch (err) {
+      quoteIdent(undefined);
+    } catch (err: any) {
       assert(err.message === 'SQL identifier cannot be null or undefined');
       done();
     }
@@ -235,8 +245,8 @@ describe('format.ident(val)', function () {
 
   it('should throw when null', function (done) {
     try {
-      format.ident(null);
-    } catch (err) {
+      quoteIdent(null);
+    } catch (err: any) {
       assert(err.message === 'SQL identifier cannot be null or undefined');
       done();
     }
@@ -244,40 +254,40 @@ describe('format.ident(val)', function () {
 
   it('should throw when object', function (done) {
     try {
-      format.ident({});
-    } catch (err) {
+      quoteIdent({});
+    } catch (err: any) {
       assert(err.message === 'SQL identifier cannot be an object');
       done();
     }
   });
 });
 
-describe('format.literal(val)', function () {
+describe('quoteLiteral(val)', function () {
   it('should return NULL for null', function () {
-    format.literal(null).should.equal('NULL');
-    format.literal(undefined).should.equal('NULL');
+    quoteLiteral(null).should.equal('NULL');
+    quoteLiteral(undefined).should.equal('NULL');
   });
 
   it('should quote', function () {
-    format.literal(true).should.equal("'t'");
-    format.literal(false).should.equal("'f'");
-    format.literal(0).should.equal('0');
-    format.literal(15).should.equal('15');
-    format.literal(-15).should.equal('-15');
-    format.literal(45.13).should.equal('45.13');
-    format.literal(-45.13).should.equal('-45.13');
-    format.literal('hello world').should.equal("'hello world'");
-    format.literal(testArray).should.equal("'abc',1,'t',NULL,'2012-12-14 13:06:43.152+00','-Infinity','Infinity','NaN',1");
-    format.literal(testNestedArray).should.equal("(1, 2), (3, 4), (5, 6)");
-    format.literal(testDate).should.equal("'2012-12-14 13:06:43.152+00'");
-    format.literal(testObject).should.equal("'{\"a\":1,\"b\":2}'::jsonb");
+    quoteLiteral(true).should.equal("'t'");
+    quoteLiteral(false).should.equal("'f'");
+    quoteLiteral(0).should.equal('0');
+    quoteLiteral(15).should.equal('15');
+    quoteLiteral(-15).should.equal('-15');
+    quoteLiteral(45.13).should.equal('45.13');
+    quoteLiteral(-45.13).should.equal('-45.13');
+    quoteLiteral('hello world').should.equal("'hello world'");
+    quoteLiteral(testArray).should.equal("'abc',1,'t',NULL,'2012-12-14 13:06:43.152+00','-Infinity','Infinity','NaN',1");
+    quoteLiteral(testNestedArray).should.equal("(1, 2), (3, 4), (5, 6)");
+    quoteLiteral(testDate).should.equal("'2012-12-14 13:06:43.152+00'");
+    quoteLiteral(testObject).should.equal("'{\"a\":1,\"b\":2}'::jsonb");
   });
 
   it('should format quotes', function () {
-    format.literal("O'Reilly").should.equal("'O''Reilly'");
+    quoteLiteral("O'Reilly").should.equal("'O''Reilly'");
   });
 
   it('should format backslashes', function () {
-    format.literal('\\whoop\\').should.equal("E'\\\\whoop\\\\'");
+    quoteLiteral('\\whoop\\').should.equal("E'\\\\whoop\\\\'");
   });
 });

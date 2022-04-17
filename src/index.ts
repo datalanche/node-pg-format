@@ -1,5 +1,5 @@
 // reserved Postgres words
-const reservedMap = require(__dirname + '/reserved.js')
+import reservedMap from './reserved'
 
 const fmtPattern = {
   ident: 'I',
@@ -34,7 +34,7 @@ function arrayToList(useSpace:boolean, array:any[], formatter:(value:any)=>strin
 }
 
 // Ported from PostgreSQL 9.2.4 source code in src/interfaces/libpq/fe-exec.c
-function quoteIdent(value:any): string {
+export function quoteIdent(value:any): string {
 
   if (value === undefined || value === null) {
     throw new Error('SQL identifier cannot be null or undefined')
@@ -84,7 +84,7 @@ function quoteIdent(value:any): string {
 }
 
 // Ported from PostgreSQL 9.2.4 source code in src/interfaces/libpq/fe-exec.c
-function quoteLiteral(value) {
+export function quoteLiteral(value) {
 
   let literal = ''
   let explicitCast: string | null = null
@@ -154,7 +154,7 @@ function quoteLiteral(value) {
   return quoted
 }
 
-function quoteString(value): string {
+export function quoteString(value): string {
 
   if (value === undefined || value === null) {
     return ''
@@ -185,7 +185,7 @@ function quoteString(value): string {
   return value.toString().slice(0) // return copy
 }
 
-function config(cfg) {
+export function config(cfg) {
 
   // default
   fmtPattern.ident = 'I'
@@ -199,7 +199,7 @@ function config(cfg) {
   }
 }
 
-function formatWithArray(fmt, parameters) {
+export function formatWithArray(fmt, parameters) {
 
   let index = 0
   let params = parameters
@@ -243,16 +243,8 @@ function formatWithArray(fmt, parameters) {
   })
 }
 
-function format(fmt: string, ...args: any[]): string {
+export function format(fmt: string, ...args: any[]): string {
   return formatWithArray(fmt, args)
 }
 
-
-format.config = config
-format.ident = quoteIdent
-format.literal = quoteLiteral
-format.string = quoteString
-format.withArray = formatWithArray
-
-export = format 
 
