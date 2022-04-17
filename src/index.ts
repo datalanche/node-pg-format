@@ -1,6 +1,15 @@
 // reserved Postgres words
 import reservedMap from './reserved'
 
+export interface Pattern {
+  ident?: string
+  literal?: string
+  string?: string
+}
+export interface Config {
+  pattern?: Pattern
+}
+
 const fmtPattern = {
   ident: 'I',
   literal: 'L',
@@ -8,20 +17,20 @@ const fmtPattern = {
 }
 
 // convert to Postgres default ISO 8601 format
-function formatDate(date:string): string {
+function formatDate(date: string): string {
   date = date.replace('T', ' ')
   date = date.replace('Z', '+00')
   return date
 }
 
-function isReserved(value:string):boolean {
+function isReserved(value: string): boolean {
   if (reservedMap[value.toUpperCase()]) {
     return true
   }
   return false
 }
 
-function arrayToList(useSpace:boolean, array:any[], formatter:(value:any)=>string) {
+function arrayToList(useSpace: boolean, array: any[], formatter: (value: any) => string) {
   let sql = ''
 
   sql += useSpace ? ' (' : '('
@@ -34,7 +43,7 @@ function arrayToList(useSpace:boolean, array:any[], formatter:(value:any)=>strin
 }
 
 // Ported from PostgreSQL 9.2.4 source code in src/interfaces/libpq/fe-exec.c
-export function quoteIdent(value:any): string {
+export function quoteIdent(value: any): string {
 
   if (value === undefined || value === null) {
     throw new Error('SQL identifier cannot be null or undefined')
@@ -85,7 +94,7 @@ export function quoteIdent(value:any): string {
 }
 
 // Ported from PostgreSQL 9.2.4 source code in src/interfaces/libpq/fe-exec.c
-export function quoteLiteral(value) {
+export function quoteLiteral(value: any) {
 
   let literal = ''
   let explicitCast: string | null = null
@@ -155,7 +164,7 @@ export function quoteLiteral(value) {
   return quoted
 }
 
-export function quoteString(value): string {
+export function quoteString(value: any): string {
 
   if (value === undefined || value === null) {
     return ''
@@ -186,7 +195,9 @@ export function quoteString(value): string {
   return value.toString().slice(0) // return copy
 }
 
-export function config(cfg) {
+
+
+export function config(cfg:Config) {
 
   // default
   fmtPattern.ident = 'I'
@@ -200,10 +211,10 @@ export function config(cfg) {
   }
 }
 
-export function formatWithArray(fmt, parameters) {
+export function formatWithArray(fmt:string, parameters:any[]) {
 
   let index = 0
-  let params = parameters
+  const params = parameters
 
   let reText = '%(%|(\\d+\\$)?['
   reText += fmtPattern.ident
@@ -212,7 +223,7 @@ export function formatWithArray(fmt, parameters) {
   reText += '])'
   const re = new RegExp(reText, 'g')
 
-  return fmt.replace(re, function (_, type) {
+  return fmt.replace(re,  (_, type) => {
 
     if (type === '%') {
       return '%'
@@ -240,6 +251,8 @@ export function formatWithArray(fmt, parameters) {
       return quoteLiteral(params[position])
     } else if (type === fmtPattern.string) {
       return quoteString(params[position])
+    } else {
+      return ''
     }
   })
 }
