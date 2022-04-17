@@ -1,13 +1,6 @@
-declare function quoteIdent(value: any): string;
-declare function quoteLiteral(value: any): string;
-declare function quoteString(value: any): string;
-declare function formatWithArray(fmt: any, parameters: any): any;
-declare function format(fmt: string, ...args: any[]): string;
-declare namespace format {
-    var config: (cfg: any) => void;
-    var ident: typeof quoteIdent;
-    var literal: typeof quoteLiteral;
-    var string: typeof quoteString;
-    var withArray: typeof formatWithArray;
-}
-export = format;
+export declare function quoteIdent(value: any): string;
+export declare function quoteLiteral(value: any): string;
+export declare function quoteString(value: any): string;
+export declare function config(cfg: any): void;
+export declare function formatWithArray(fmt: any, parameters: any): any;
+export declare function format(fmt: string, ...args: any[]): string;

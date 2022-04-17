@@ -5,14 +5,16 @@ import {
   quoteLiteral,
   quoteString,
   config
-} from '..'
-import assert from 'assert'
-import 'should'
-import { exit } from 'process';
+} from '..';
+import assert from 'assert';
+import 'should';
+
 
 
 const testDate = new Date(Date.UTC(2012, 11, 14, 13, 6, 43, 152));
+//@ts-ignore
 const testArray = ['abc', 1, true, null, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
+//@ts-ignore
 const testIdentArray = ['abc', 'AbC', 1, true, testDate, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NaN, 1n];
 const testObject = { a: 1, b: 2 };
 const testNestedArray = [[1, 2], [3, 4], [5, 6]];
@@ -20,13 +22,10 @@ const testNestedArray = [[1, 2], [3, 4], [5, 6]];
 describe('format(fmt, ...)', function () {
   describe('%s', function () {
     it('should format as a simple string', function () {
-     
       format('some %s here', 'thing').should.equal('some thing here');
       format('some %s thing %s', 'long', 'here').should.equal('some long thing here');
-  
     });
 
- 
 
     it('should format array of array as simple string', function () {
       format('many %s %s', 'things', testNestedArray).should.equal('many things (1, 2), (3, 4), (5, 6)');
@@ -227,7 +226,7 @@ describe('quoteIdent(val)', function () {
     quoteIdent(-15).should.equal('"-15"');
     quoteIdent(45.13).should.equal('"45.13"');
     quoteIdent(-45.13).should.equal('"-45.13"');
-    quoteIdent(testIdentArray).should.equal('abc,"AbC","1","t","2012-12-14 13:06:43.152+00","-Infinity","Infinity","NaN","1"');
+    quoteIdent(testIdentArray).should.equal('abc,AbC,"1","t","2012-12-14 13:06:43.152+00","-Infinity",Infinity,NaN,"1"');
     (function () {
       quoteIdent(testNestedArray)
     }).should.throw(Error);

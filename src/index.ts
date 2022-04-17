@@ -63,7 +63,8 @@ export function quoteIdent(value:any): string {
   const ident = value.toString().slice(0) // create copy
 
   // do not quote a valid, unquoted identifier
-  if (/^[a-z_][a-z0-9_$.]*$/.test(ident) === true && isReserved(ident) === false) {
+  // https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
+  if (/^[a-zA-Z_][a-zA-Z0-9_$.]*$/.test(ident) === true && isReserved(ident) === false) {
     return ident
   }
 

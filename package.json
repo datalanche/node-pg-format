@@ -30,7 +30,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "prepublish": "npm build",
+    "prepublish": "npm run build",
     "build": "tsc",
     "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts"
   }
